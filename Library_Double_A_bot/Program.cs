@@ -45,6 +45,12 @@ namespace Library_Double_A_bot
                 }
             }
 
+            if (text.Contains("download"))            
+                DownloadFile(text, libraryPath, allfiles, e);
+            
+
+            
+/*
             if(text == @"\download-1")
             {
                  try
@@ -64,26 +70,28 @@ namespace Library_Double_A_bot
                     Console.WriteLine("Error downloading: " + ex.Message);
                 }
                 
-            }
+            }*/
            
         }
 
-     /*   private static async void DownloadFile(object fileId, string path)
+        private static async void DownloadFile(string text, string path, string[] allfiles, MessageEventArgs e)
         {
+
             try
             {
-                path = allfiles[Convert.ToInt32(path.Remove(0, path.LastIndexOf('-')))];
-                var file = await botClient.GetFileAsync(path);
-
-                using (var saveImageStream = new FileStream(path, FileMode.Create))
+                path = allfiles[Convert.ToInt32(text.Remove(0, text.LastIndexOf('-') + 1)) - 1];
+                await botClient.SendTextMessageAsync(e.Message.Chat, "Хороший выбор! Пожалуйтса подождите, пока ваша книга загрузится.");
+                using (var sendFileStream = File.Open(path, FileMode.Open))
                 {
-                    await file.FileStream.CopyToAsync(saveImageStream);
+                    await botClient.SendDocumentAsync(e.Message.Chat, new Telegram.Bot.Types.InputFiles.InputOnlineFile(sendFileStream, path.Remove(0, libraryPath.Length + 1)));
+                    await botClient.SendTextMessageAsync(e.Message.Chat, "Ваша книга загружена, приятного чтения!");
                 }
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error downloading: " + ex.Message);
             }
-        }*/
+        }
     }
 }
